@@ -77,7 +77,7 @@ function webinarjam_select_webinar_product_tab_content() {
     //lets get webinarlist and select one in dropdown! // simplest)
     $webinarjam_api_key=get_option('webinarjam_api_key','');
     $webinarlist=__webinarjam_list_webinars($webinarjam_api_key);
-    $webinars=[];
+    $webinars=array();
     if(is_array($webinarlist)){
         foreach($webinarlist as $webinar){
             $webinars[$webinar->webinar_id] = $webinar->name ;
@@ -193,7 +193,7 @@ function webinarjam_send_webinar_link_to_paid_client($order_id){
                         // email to admin registration error!
                         $error_email_template=file_get_contents( plugin_dir_path(__FILE__). 'includes/error_email_template.php');
                         $user_name=(!empty($user->user_firstname))&& (!empty($user->user_lastname))?$user->user_firstname.' '.$user->user_lastname: $user->display_name;
-                        $error_data=[
+                        $error_data=array(
                             'webinar_name' =>$webinar_name,
                             'user_email'   =>$user->user_email,
                             'user_name'     =>$user_name,
@@ -201,7 +201,7 @@ function webinarjam_send_webinar_link_to_paid_client($order_id){
                             'product_id'    =>$_product->id,
                             'product_name'  =>$_product->get_title(),
                             'date'          =>date("Y-m-d H:i:s")
-                        ];
+                        );
                         foreach($error_data as $item=>$value){
                             $error_email_template=str_replace('{'.$item.'}',$value,$error_email_template);
                         }
