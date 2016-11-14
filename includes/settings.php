@@ -26,7 +26,7 @@ $default_admin_email_template=file_get_contents( plugin_dir_path(__FILE__). 'def
             <tr valign="top">
                 <th scope="row">Email template for client purchased webinar with links to participate</th>
                 <td>
-                    <?php  wp_editor(get_option('webinarjam_paid_successfully_email_template',$default_email_template),'webinarjam_paid_successfully_email_template',['textarea_name'=>'webinarjam_paid_successfully_email_template']); ?>
+                    <?php  wp_editor(get_option('webinarjam_paid_successfully_email_template',$default_email_template),'webinarjam_paid_successfully_email_template',array('textarea_name'=>'webinarjam_paid_successfully_email_template')); ?>
                 </td>
             </tr>
             <tr valign="top">
@@ -36,7 +36,7 @@ $default_admin_email_template=file_get_contents( plugin_dir_path(__FILE__). 'def
             <tr valign="top">
                 <th scope="row">Admin notification Email template</th>
                 <td>
-                    <?php  wp_editor(get_option('webinarjam_paid_successfully_admin_email_template',$default_admin_email_template),'webinarjam_paid_successfully_admin_email_template',['textarea_name'=>'webinarjam_paid_successfully_admin_email_template']); ?>
+                    <?php  wp_editor(get_option('webinarjam_paid_successfully_admin_email_template',$default_admin_email_template),'webinarjam_paid_successfully_admin_email_template',array('textarea_name'=>'webinarjam_paid_successfully_admin_email_template')); ?>
                 </td>
             </tr>
         </table>
