@@ -10,12 +10,12 @@ function __webinarjam_list_webinars($api_key){
         'body'=>array('api_key'=>$api_key)
     ));
     if ( is_wp_error( $response ) ) {
-        return 'Unauthorized';
+        return $response;// return wp_error as is to debug
     } else {
         $body = $response['body'];
-        if('Unauthorized'===$body) return 'Unauthorized';
+        if('Unauthorized'===$body) return new WP_Error( 'Unauthorized','Unauthorized while listing webinars' );
         else $result= json_decode( $body );
-        return isset($result->webinars)?$result->webinars:'Unauthorized';
+        return isset($result->webinars)?$result->webinars:new WP_Error( 'wrong_response','wrong response from server while listing webinars' );
     }
 }
 
@@ -26,12 +26,12 @@ function __webinarjam_get_webinar_data($api_key,$webinar_id){
             'body'=>array('api_key'=>$api_key,'webinar_id'=>$webinar_id)
         ));
     if ( is_wp_error( $response ) ) {
-        return 'Unauthorized';
+        return $response;
     } else {
         $body = $response['body'];
-        if('Unauthorized'===$body) return 'Unauthorized';
+        if('Unauthorized'===$body) return  new WP_Error( 'Unauthorized','Unauthorized while gettings single webinar details' );
         else $result= json_decode( $body );
-        return isset($result->webinar)?$result->webinar:'Unauthorized';
+        return isset($result->webinar)?$result->webinar:new WP_Error( 'wrong_response','wrong response from server while getting single webinar details' );
     }
 }
 
@@ -55,13 +55,13 @@ function __webinarjam_register_user_to_webinar($api_key,$webinar_id,$user,$sched
                 )
         ));
         if ( is_wp_error( $response ) ) {
-            return false;
+            return $response; // return WP_Error as is to debug.
         } else {
             $body = $response['body'];
-            if('Unauthorized'===$body) return false;
-            else $result= json_decode( $body );
-            return isset($result->user)?$result->user:false;
+            if('Unauthorized'===$body) return new WP_Error( 'Unauthorized','Unauthorized while registering user to webinar');
+            else $result = json_decode( $body );
+            return isset($result->user)?$result->user:new WP_Error( 'wrong_response','wrong response from server while registering user to webinar' );
         }
     }
-    return false; // if no right user or user id supplied
+    return new WP_Error( 'nouser','wrong user id or email supplied' ); // if no right user or user id supplied
 }

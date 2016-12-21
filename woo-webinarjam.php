@@ -2,7 +2,7 @@
 /*
 Plugin Name: Woocommerce WebinarJam
 Description: Sell access to your webinars with woocommerce
-Version: 0.1
+Version: 0.2
 Author: Mikhail Durnev
 Author URI: http://mikhailroot.github.io
 Copyright: (c)2016 Mikhail Durnev (email : mikhailD.101@gmail.com; skype: mikhail.root)
@@ -78,7 +78,7 @@ function webinarjam_select_webinar_product_tab_content() {
     $webinarjam_api_key=get_option('webinarjam_api_key','');
     $webinarlist=__webinarjam_list_webinars($webinarjam_api_key);
     $webinars=array();
-    if(is_array($webinarlist)){
+    if(is_array($webinarlist) && !is_wp_error($webinarlist)){
         foreach($webinarlist as $webinar){
             $webinars[$webinar->webinar_id] = $webinar->name ;
         }
@@ -93,7 +93,7 @@ function webinarjam_select_webinar_product_tab_content() {
                 <p><a href="/wp-admin/options-general.php?page=webinarjam-admin-settings">click here to set API key</a> then go to webinarjam and create Webinars to sell</p>
                 <p>then select here in dropdown list needed webinar to sell.</p>
             <?php
-        }elseif( 'Unauthorized'===$webinarlist){
+        }elseif( is_wp_error($webinarlist) ){
                ?>
                 <h2>Error loading webinars</h2>
                 <p>Possible wrong API key</p>
@@ -189,10 +189,22 @@ function webinarjam_send_webinar_link_to_paid_client($order_id){
                     $webinar_name=isset($webinar_obj->name)?$webinar_obj->name:$_product->get_title();
                     // REGISTER user to webinar!
                     $webinar_registration=__webinarjam_register_user_to_webinar($webinarjam_api_key,$webinarjam_id,$user,0);
-                    if(false===$webinar_registration|| null===$webinar_registration ){
+                    if( is_wp_error($webinar_registration) ){
                         // email to admin registration error!
                         $error_email_template=file_get_contents( plugin_dir_path(__FILE__). 'includes/error_email_template.php');
                         $user_name=(!empty($user->user_firstname))&& (!empty($user->user_lastname))?$user->user_firstname.' '.$user->user_lastname: $user->display_name;
+                            $error= new WP_Error();
+                        if(is_wp_error($webinar_obj)){
+                             $error->add($webinar_obj->get_error_code(),$webinar_obj->get_error_message());
+                        }
+                        
+                        $error->add($webinar_registration->get_error_code(),$webinar_registration->get_error_message());
+
+                        $error_messages='<ul>';
+                        foreach ( $error->get_error_messages() as $message ) {
+                            $error_messages.='<li>'.$message.'</li>';
+                        }
+                        $error_messages.='</ul>';
                         $error_data=array(
                             'webinar_name' =>$webinar_name,
                             'user_email'   =>$user->user_email,
@@ -200,7 +212,8 @@ function webinarjam_send_webinar_link_to_paid_client($order_id){
                             'order_id'      =>$order->id,
                             'product_id'    =>$_product->id,
                             'product_name'  =>$_product->get_title(),
-                            'date'          =>date("Y-m-d H:i:s")
+                            'date'          =>date("Y-m-d H:i:s"),
+                            'errors'        =>$error_messages
                         );
                         foreach($error_data as $item=>$value){
                             $error_email_template=str_replace('{'.$item.'}',$value,$error_email_template);

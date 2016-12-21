@@ -24,4 +24,8 @@
         <td>Product Name </td>
         <td>{product_name}</td>
     </tr>
+    <tr>
+        <td>ERRORS:</td>
+        <td>{errors}</td>
+    </tr>
 </table>
