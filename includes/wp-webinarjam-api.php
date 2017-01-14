@@ -15,7 +15,7 @@ function __webinarjam_list_webinars($api_key){
         $body = $response['body'];
         if('Unauthorized'===$body) return new WP_Error( 'Unauthorized','Unauthorized while listing webinars' );
         else $result= json_decode( $body );
-        return isset($result->webinars)?$result->webinars:new WP_Error( 'wrong_response','wrong response from server while listing webinars' );
+        return isset($result->webinars)?$result->webinars:new WP_Error( 'wrong_response','wrong response from server while listing webinars, '.isset($result->status)?$result->message:' ' );
     }
 }
 
@@ -31,7 +31,7 @@ function __webinarjam_get_webinar_data($api_key,$webinar_id){
         $body = $response['body'];
         if('Unauthorized'===$body) return  new WP_Error( 'Unauthorized','Unauthorized while gettings single webinar details' );
         else $result= json_decode( $body );
-        return isset($result->webinar)?$result->webinar:new WP_Error( 'wrong_response','wrong response from server while getting single webinar details' );
+        return isset($result->webinar)?$result->webinar:new WP_Error( 'wrong_response','wrong response from server while getting single webinar details, '.isset($result->status)?$result->message:' ' );
     }
 }
 
