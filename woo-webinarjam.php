@@ -2,7 +2,7 @@
 /*
 Plugin Name: Woocommerce WebinarJam
 Description: Sell access to your webinars with woocommerce
-Version: 0.2
+Version: 0.2.1
 Author: Mikhail Durnev
 Author URI: http://mikhailroot.github.io
 Copyright: (c)2016 Mikhail Durnev (email : mikhailD.101@gmail.com; skype: mikhail.root)
@@ -188,7 +188,7 @@ function webinarjam_send_webinar_link_to_paid_client($order_id){
                     $webinar_obj=__webinarjam_get_webinar_data($webinarjam_api_key,$webinarjam_id);
                     $webinar_name=isset($webinar_obj->name)?$webinar_obj->name:$_product->get_title();
                     // REGISTER user to webinar!
-                    $webinar_registration=__webinarjam_register_user_to_webinar($webinarjam_api_key,$webinarjam_id,$user,0);
+                    $webinar_registration=__webinarjam_register_user_to_webinar($webinarjam_api_key,$webinarjam_id,$user->ID,0);
                     if( is_wp_error($webinar_registration) ){
                         // email to admin registration error!
                         $error_email_template=file_get_contents( plugin_dir_path(__FILE__). 'includes/error_email_template.php');

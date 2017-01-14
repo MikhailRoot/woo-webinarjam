@@ -40,7 +40,7 @@ function __webinarjam_register_user_to_webinar($api_key,$webinar_id,$user,$sched
     if(is_numeric($user)){
         $user=get_userdata($user);
     }
-    if(isset($user->user_email) ){
+    if($user instanceof WP_User && $user->ID>0){
         $email=$user->user_email;
         $name=(!empty($user->user_firstname))&& (!empty($user->user_lastname))?$user->user_firstname.' '.$user->user_lastname: $user->display_name;
         $response=wp_remote_post('https://app.webinarjam.com/api/v2/register',
@@ -60,7 +60,7 @@ function __webinarjam_register_user_to_webinar($api_key,$webinar_id,$user,$sched
             $body = $response['body'];
             if('Unauthorized'===$body) return new WP_Error( 'Unauthorized','Unauthorized while registering user to webinar');
             else $result = json_decode( $body );
-            return isset($result->user)?$result->user:new WP_Error( 'wrong_response','wrong response from server while registering user to webinar' );
+            return isset($result->user)?$result->user:new WP_Error( 'wrong_response', isset($result->status)?$result->message: 'wrong response from server while registering user to webinar' );
         }
     }
     return new WP_Error( 'nouser','wrong user id or email supplied' ); // if no right user or user id supplied
