@@ -41,6 +41,19 @@ Thank you!
 
 **Happy webinars selling!**
 
+## NEW Features
+1. added metabox within order screen in woocommerce to show webinarjam registration result's data to admin
+2. now you have `webinarjam` shortcode to echo latest or specified by order_id  webinarjam registration result's data:
+ - webinar_id, user_id, name, email, schedule, date, timezone, live_room_url , replay_room_url, thank_you_url all those are webinarjam's data for example user_id and webinar_id are id's in webinarjam system not your Wordpress|Woocommerce 
+ - You can also specify css classes passed in as class attribute as string
+ example usage 
+ 
+ `[webinarjam  class=sample_class param=replay_room_url ] Here's your replay link [/webinarjam]` - without order_id specified it will get last webinar bought by current user.
+ 
+ or 
+ 
+ `[webinarjam  class=sample_class param=live_room_url ] Here's your webinar access link [/webinarjam]`
+
 ## Plans
 
 - add fields to order info - showing access links for webinars per client.
