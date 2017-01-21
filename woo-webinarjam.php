@@ -2,7 +2,7 @@
 /*
 Plugin Name: Woocommerce WebinarJam
 Description: Sell access to your webinars with woocommerce
-Version: 0.2.1
+Version: 0.3.1
 Author: Mikhail Durnev
 Author URI: http://mikhailroot.github.io
 Copyright: (c)2016 Mikhail Durnev (email : mikhailD.101@gmail.com; skype: mikhail.root)
@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 //include http api methods
 require_once plugin_dir_path(__FILE__) . 'includes/wp-webinarjam-api.php';
+
 
 function webinarjam_admin_settings()
 {
@@ -30,6 +31,14 @@ add_action('admin_menu','webinarjam_admin_page');
  */
 function register_webinarjam_product_type() {
     require_once plugin_dir_path(__FILE__) . 'includes/wc-product-webinarjam.php';
+
+    // functions to work with orders, extract data from webinars etc.
+
+    require_once plugin_dir_path(__FILE__) . 'includes/utilities.php';
+    // add metabox to Order's page
+    require_once plugin_dir_path(__FILE__) . 'includes/order-webinarjam-metabox.php';
+
+    require_once plugin_dir_path(__FILE__) . 'includes/webinarjam-shortcodes.php';
 }
 add_action( 'init', 'register_webinarjam_product_type' );
 
