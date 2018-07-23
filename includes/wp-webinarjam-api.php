@@ -42,14 +42,16 @@ function __webinarjam_register_user_to_webinar($api_key,$webinar_id,$user,$sched
     }
     if($user instanceof WP_User && $user->ID>0){
         $email=$user->user_email;
-        $name=(!empty($user->user_firstname))&& (!empty($user->user_lastname))?$user->user_firstname.' '.$user->user_lastname: $user->display_name;
+        $first_name = !empty($user->user_firstname) ? $user->user_firstname : $user->display_name;
+        $last_name  = !empty($user->user_lastname) ? $user->last_name : '';
         $response=wp_remote_post('https://webinarjam.genndi.com/api/register',
             array(
                 'method'=>'POST',
                 'body'=>array(
                     'api_key'=>$api_key,
                     'webinar_id'=>$webinar_id,
-                    'name'=>$name,
+                    'first_name'=>$first_name,
+                    'last_name' => $last_name,
                     'email'=>$email,
                     'schedule'=>$schedule
                 )
