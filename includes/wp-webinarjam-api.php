@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function __webinarjam_list_webinars($api_key){
-    $response=wp_remote_post('https://app.webinarjam.com/api/v2/webinars',
+    $response=wp_remote_post('https://webinarjam.genndi.com/api/webinars',
     array(
         'method'=>'POST',
         'body'=>array('api_key'=>$api_key)
@@ -20,7 +20,7 @@ function __webinarjam_list_webinars($api_key){
 }
 
 function __webinarjam_get_webinar_data($api_key,$webinar_id){
-    $response=wp_remote_post('https://app.webinarjam.com/api/v2/webinar',
+    $response=wp_remote_post('https://webinarjam.genndi.com/api/webinar',
         array(
             'method'=>'POST',
             'body'=>array('api_key'=>$api_key,'webinar_id'=>$webinar_id)
@@ -43,7 +43,7 @@ function __webinarjam_register_user_to_webinar($api_key,$webinar_id,$user,$sched
     if($user instanceof WP_User && $user->ID>0){
         $email=$user->user_email;
         $name=(!empty($user->user_firstname))&& (!empty($user->user_lastname))?$user->user_firstname.' '.$user->user_lastname: $user->display_name;
-        $response=wp_remote_post('https://app.webinarjam.com/api/v2/register',
+        $response=wp_remote_post('https://webinarjam.genndi.com/api/register',
             array(
                 'method'=>'POST',
                 'body'=>array(
