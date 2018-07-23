@@ -3,6 +3,10 @@ Woocommerce plugin to sell webinarjam webinars
 
 My friend needed to sell webinars with webinarjam and i've created plugin for woocomerce for it. 
 
+## Update:
+_Now it works with recently updated API!_
+
+
 ## NOTE
 
 You are free to use this plugin without any charge.
