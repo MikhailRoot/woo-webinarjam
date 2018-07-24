@@ -63,7 +63,7 @@ function webinarjam_product_tabs( $tabs) {
     $tabs['shipping']['class'][] = 'hide_if_webinarjam ';
     $tabs['variations']['class'][] = 'hide_if_webinarjam ';
     $tabs['advanced']['class'][] = 'hide_if_webinarjam ';
-    $tabs['general']['class'][] = 'hide_if_webinarjam ';
+    $tabs['general']['class'][] = 'show_if_webinarjam ';
 
     //create our own tab
     $mytab=array(
@@ -114,9 +114,6 @@ function webinarjam_select_webinar_product_tab_content() {
                     <p>Create new webinar on webinarjam admin panel and try again.</p>
                     <?php
         }else {
-            // Price
-            $price=get_post_meta( $thepostid, '_regular_price', true );
-            woocommerce_wp_text_input( array( 'id' => '_webinarjam_regular_price', 'value'=>$price,'label' => __( 'Regular Price', 'woocommerce' ) . ' (' . get_woocommerce_currency_symbol() . ')', 'data_type' => 'price' ) );
             woocommerce_wp_select(array(
                         'id' => 'webinarjam_id',
                         'name' => 'webinarjam_id',
@@ -139,10 +136,6 @@ add_action( 'woocommerce_product_data_panels', 'webinarjam_select_webinar_produc
  */
 function webinarjam_option_field( $post_id )
 {
-    if (isset($_POST['_webinarjam_regular_price'])) {
-        update_post_meta($post_id, '_regular_price', sanitize_text_field($_POST['_webinarjam_regular_price']));
-        update_post_meta($post_id, '_price', sanitize_text_field($_POST['_webinarjam_regular_price']));
-    }
     if (isset($_POST['webinarjam_id'])) {
         update_post_meta($post_id, 'webinarjam_id', sanitize_text_field($_POST['webinarjam_id']));
     }
@@ -153,6 +146,18 @@ function webinarjam_option_field( $post_id )
 }
 add_action( 'woocommerce_process_product_meta_webinarjam', 'webinarjam_option_field'  );
 add_action( 'woocommerce_process_product_meta_webinarjam', 'webinarjam_option_field'  );
+
+
+function webinarjam_product_type_selector_js(){
+    if ( 'product' != get_post_type() ) :
+        return;
+    endif;
+    ?><script type='text/javascript'>
+        jQuery( '.options_group.pricing' ).addClass( 'show_if_webinarjam' );
+    </script><?php
+}
+
+add_action( 'admin_footer', 'webinarjam_product_type_selector_js' );
 
 /**
  * autocomplete webinarjam orders as they are virtual products
@@ -167,7 +172,7 @@ function autocompleteWebinarjamOrders($order_status, $order_id)
         if (count($order->get_items()) > 0 ) {
             foreach ($order->get_items() as $item) {
                 if ('line_item' == $item['type']) {
-                    $_product = $order->get_product_from_item($item);
+                    $_product = $item->get_product();//$order->get_product_from_item($item);
                     if('webinarjam'===$_product->product_type){
                         // send email here:)
                         return 'completed';
