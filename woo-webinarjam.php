@@ -2,7 +2,7 @@
 /*
 Plugin Name: Woocommerce WebinarJam
 Description: Sell access to your webinars with woocommerce
-Version: 0.4.0
+Version: 0.4.1
 Author: Mikhail Durnev
 Author URI: http://mikhailroot.github.io
 Copyright: (c)2016 Mikhail Durnev (email : mikhailD.101@gmail.com; skype: mikhail.root)
