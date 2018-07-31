@@ -2,7 +2,7 @@
 /*
 Plugin Name: Woocommerce WebinarJam
 Description: Sell access to your webinars with woocommerce
-Version: 0.4.2
+Version: 0.5
 Author: Mikhail Durnev
 Author URI: http://mikhailroot.github.io
 Copyright: (c)2018 Mikhail Durnev (email : mikhailD.101@gmail.com; skype: mikhail.root)
@@ -189,6 +189,8 @@ add_filter('woocommerce_payment_complete_order_status', 'autocompleteWebinarjamO
 function webinarjam_send_webinar_link_to_paid_client($order_id){
     $order = new WC_Order($order_id);
     $user=$order->get_user();
+    $registration_results = []; // array to store webinar registration results - in case we have multiple webinars bought in one order
+
     if (count($order->get_items()) > 0 ) {
         foreach ($order->get_items() as $item) {
             if ( ! is_object( $item ) ) {
@@ -196,6 +198,7 @@ function webinarjam_send_webinar_link_to_paid_client($order_id){
             }
             if ( $item->is_type('line_item')) {
                 $_product = $item->get_product();
+
                 if('webinarjam'===$_product->product_type){
                     // lets register user for webinar and send him access link
                     $admin_email=get_option('admin_email','');
@@ -237,9 +240,11 @@ function webinarjam_send_webinar_link_to_paid_client($order_id){
                         }
                         wc_mail($admin_email,'Webinar registration Error!',$error_email_template);
 
-                    }else{
-                        // lets store successfull registration to webinar to Order post meta.
-                        update_post_meta($order->get_id(),'webinarjam_registration_result',json_encode($webinar_registration));
+                    }
+                    else{
+                        // lets store successful registration to webinar to Order post meta.
+                        $webinar_registration->{'webinar_name'} = $webinar_name; // extend stored data with webinar_name.
+                        $registration_results[] = $webinar_registration; // push it to array of registration results
                         // send email to client and admin notification here:)
                         $default_email_template=file_get_contents( plugin_dir_path(__FILE__). 'includes/default_email_template.php');
                         $default_admin_email_template=file_get_contents( plugin_dir_path(__FILE__). 'includes/default_admin_email_template.php');
@@ -272,6 +277,10 @@ function webinarjam_send_webinar_link_to_paid_client($order_id){
                 }
             }
         }
+    }
+
+    if(count($registration_results)){
+        update_post_meta($order->get_id(),'webinarjam_registration_result',json_encode($registration_results));
     }
 }
 add_action('woocommerce_order_status_completed','webinarjam_send_webinar_link_to_paid_client',50,1);

@@ -45,27 +45,74 @@ function webinarjam_registration_result_link_and_content_shortcode($atts, $conte
         $atts['order_id']=$last_webinar_order_id;
     }
 
-    $reg_result=__webinarjam_get_webinar_registration_result_from_order($atts['order_id']);
-
-    $param_to_echo=$reg_result->{$atts['param']};
+    $reg_results=__webinarjam_get_webinar_registration_results_from_order( intval($atts['order_id']) );
 
     $result='';
 
-    if($param_to_echo){
-        // url and span
-        if(strpos($atts['param'],'_url')===false){
+    $content  = do_shortcode($content);// we allow shortcodes inside our shortcode
 
-            $result= '<div class="'.$atts['class'].'"><span class="webinarjam_value">'.$param_to_echo.'</span>'.$content.'</div>';
 
-        }else{
+    foreach ($reg_results as $reg_result){
 
-            $result= '<a class="'.$atts['class'].'" href="'.$param_to_echo.'" >';
-            $result.= strlen($content)>0?$content:$param_to_echo;
-            $result.='</a>';
-        }
-    }
+            // lets make placeholeder replacements in $content.
+            $result_content = __webinarjam_make_placeholder_replacements_for_webinar($content, $reg_result);
+
+            $param_to_echo=$reg_result->{$atts['param']};
+
+            if($param_to_echo){
+                // url and span
+                if(strpos($atts['param'],'_url')===false){
+
+                    $result= '<div class="'.$atts['class'].'"><span class="webinarjam_value">'.$param_to_echo.'</span>'.$result_content.'</div>';
+
+                }else{
+
+                    $result= '<a class="'.$atts['class'].'" href="'.$param_to_echo.'" >';
+                    $result.= strlen($result_content)>0?$result_content:$param_to_echo;
+                    $result.='</a>';
+                }
+            }
+
+}
+
 
     return $result;
 }
 
 add_shortcode('webinarjam','webinarjam_registration_result_link_and_content_shortcode');
+
+
+/**
+ * Same as Above but selects all ever bought webinars and outputs their parameters
+ * @param $atts
+ * @param string $content
+ * @return string
+ */
+function webinarjam_registration_result_links_and_content_list_shortcode($atts, $content=''){
+
+    $defaults=array(
+        'class'=>'webinarjam_reg_result_list'
+    );
+
+    $atts=wp_parse_args($atts,$defaults);
+
+    $result='';
+    // lets get orders with webinars
+    $orders = __webinarjam_get_current_user_orders_with_webinarjam_webinars();
+    // $content is a template to output our webinarjam item so lets set it's order_id as needed
+
+    foreach ($orders as $order){
+        if($order instanceof  WP_Post){
+            $webinar_item_shortcode_content = $content;
+            $webinar_item_shortcode_content = preg_replace('!(order_id=?[",\']?[\d]*[",\']?)!',' order_id="'. $order->ID.'" ',$webinar_item_shortcode_content);
+            $result .= do_shortcode($webinar_item_shortcode_content);
+        }
+    }
+
+
+    // wrap items in list wrapper for easy future stying if needed
+    $result = '<div class="'. esc_attr($atts['class']).'">' . $result . '</div>';
+    return $result;
+}
+
+add_shortcode('webinarjam-list','webinarjam_registration_result_links_and_content_list_shortcode');

@@ -45,22 +45,41 @@ Thank you!
 
 **Happy webinars selling!**
 
-## NEW Features
+## Features
 1. added metabox within order screen in woocommerce to show webinarjam registration result's data to admin
-2. now you have `webinarjam` shortcode to echo latest or specified by order_id  webinarjam registration result's data:
- - webinar_id, user_id, name, email, schedule, date, timezone, live_room_url , replay_room_url, thank_you_url all those are webinarjam's data for example user_id and webinar_id are id's in webinarjam system not your Wordpress|Woocommerce 
+2. it supports multiple webinarjam products bought via single order.
+3. `webinarjam-list` shortcode to output all bought by user webinars from all orders (see example below). 
+4. `webinarjam` shortcode to echo latest or specified by order_id  webinarjam registration result's data:
+ - webinar_id, webinar_name, user_id, name, email, schedule, date, timezone, live_room_url , replay_room_url, thank_you_url all those are webinarjam's data for example user_id and webinar_id are id's in webinarjam system not your Wordpress|Woocommerce
+ - you can use {parameter_name} placeholders to replace them in side shortcode's content see example below. 
  - You can also specify css classes passed in as class attribute as string
  example usage 
  
- `[webinarjam  class=sample_class param=replay_room_url ] Here's your replay link [/webinarjam]` - without order_id specified it will get last webinar bought by current user.
+ `[webinarjam  class="sample_class" param="replay_room_url" ] {webinar_name} - for replay visit: {replay_room_url} [/webinarjam]` - without order_id specified it will get last webinar bought by current user.
  
  or 
  
- `[webinarjam  class=sample_class param=live_room_url ] Here's your webinar access link [/webinarjam]`
+ `[webinarjam  class=sample_class param=live_room_url ] {webinar_name} - for replay visit: {replay_room_url} [/webinarjam]`
 
+  Example of `[webinarjam-list]` shortcode usage, it should have inside it a `[webinarjam]` shortcode instance which 
+  will be used as a template to output all each bought by user webinar item. As explained above `{param_name}` are inner content placeholders which can be used to display webinar's data,
+  all param_names corresponds to labels in webinarjam's order's screen metabox.
+  
+ ` [webinarjam-list]      
+        [webinarjam class="block" param="replay_room_url" order_id ] 
+              {webinar_name} - {replay_room_url} 
+        [/webinarjam]
+    [/webinarjam-list]
+ `
+ 
+## New Features:
+ + support for multiple webinars bought in single order.
+ + showing access links for webinars per client - accomplished via  `[webinarjam-list]` shortcode.
+ + added shortcode inner content placeholders
+ + it now uses woocommerce's standard `general` pricing tab so it has regular and sale prices.
+    
 ## Plans
 
-- add fields to order info - showing access links for webinars per client.
 - create a better email templates
 - think about better UI for selecting webinar to sell.
 
