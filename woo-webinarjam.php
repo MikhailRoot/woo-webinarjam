@@ -2,10 +2,10 @@
 /*
 Plugin Name: Woocommerce WebinarJam
 Description: Sell access to your webinars with woocommerce
-Version: 0.4.1
+Version: 0.4.2
 Author: Mikhail Durnev
 Author URI: http://mikhailroot.github.io
-Copyright: (c)2016 Mikhail Durnev (email : mikhailD.101@gmail.com; skype: mikhail.root)
+Copyright: (c)2018 Mikhail Durnev (email : mikhailD.101@gmail.com; skype: mikhail.root)
 */
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
@@ -152,7 +152,7 @@ function webinarjam_product_type_selector_js(){
     if ( 'product' != get_post_type() ) :
         return;
     endif;
-    ?><script type='text/javascript'>
+    ?><script type='text/javascript' id="webinarjam-product-pricing-tab-enabler">
         jQuery( '.options_group.pricing' ).addClass( 'show_if_webinarjam' );
     </script><?php
 }
@@ -191,8 +191,11 @@ function webinarjam_send_webinar_link_to_paid_client($order_id){
     $user=$order->get_user();
     if (count($order->get_items()) > 0 ) {
         foreach ($order->get_items() as $item) {
-            if ('line_item' == $item['type']) {
-                $_product = $order->get_product_from_item($item);
+            if ( ! is_object( $item ) ) {
+                continue;
+            }
+            if ( $item->is_type('line_item')) {
+                $_product = $item->get_product();
                 if('webinarjam'===$_product->product_type){
                     // lets register user for webinar and send him access link
                     $admin_email=get_option('admin_email','');
@@ -223,7 +226,7 @@ function webinarjam_send_webinar_link_to_paid_client($order_id){
                             'webinar_name' =>$webinar_name,
                             'user_email'   =>$user->user_email,
                             'user_name'     =>$user_name,
-                            'order_id'      =>$order->id,
+                            'order_id'      =>$order->get_id(),
                             'product_id'    =>$_product->id,
                             'product_name'  =>$_product->get_title(),
                             'date'          =>date("Y-m-d H:i:s"),
@@ -236,7 +239,7 @@ function webinarjam_send_webinar_link_to_paid_client($order_id){
 
                     }else{
                         // lets store successfull registration to webinar to Order post meta.
-                        update_post_meta($order->id,'webinarjam_registration_result',json_encode($webinar_registration));
+                        update_post_meta($order->get_id(),'webinarjam_registration_result',json_encode($webinar_registration));
                         // send email to client and admin notification here:)
                         $default_email_template=file_get_contents( plugin_dir_path(__FILE__). 'includes/default_email_template.php');
                         $default_admin_email_template=file_get_contents( plugin_dir_path(__FILE__). 'includes/default_admin_email_template.php');

@@ -14,7 +14,7 @@ function __webinarjam_get_webinar_registration_result_from_order($post=null){
         $post=get_post($post);
     }
 
-    if($post instanceof WP_Post && $post->post_type='shop_order' || $post instanceof WC_Abstract_Order) {
+    if( ($post instanceof WP_Post && ('shop_order' === $post->post_type) ) || $post instanceof WC_Abstract_Order) {
 
         return  json_decode( get_post_meta($post->ID, 'webinarjam_registration_result', true) );
     }
@@ -35,7 +35,7 @@ function __webinarjam_order_has_webinars($post=null){
         $post=get_post($post);
     }
 
-    if($post instanceof WP_Post && $post->post_type='shop_order'){
+    if($post instanceof WP_Post && ('shop_order' === $post->post_type) ) {
         $order = wc_get_order($post->ID);
     }elseif($post instanceof WC_Abstract_Order) {
         $order=$post;
@@ -61,7 +61,7 @@ function __webinarjam_order_get_webinars($post=null){
         $post=get_post($post);
     }
 
-    if($post instanceof WP_Post && $post->post_type='shop_order'){
+    if($post instanceof WP_Post && ( 'shop_order' === $post->post_type ) ){
         $order = wc_get_order($post->ID);
     }elseif($post instanceof WC_Abstract_Order) {
         $order=$post;
@@ -107,7 +107,7 @@ function __webinarjam_get_current_user_last_order_id_with_webinarjam_webinar(){
 
                 }elseif($customer_order instanceof WC_Abstract_Order){
 
-                    return $customer_order->id;
+                    return $customer_order->get_id();
 
                 }elseif( is_array($customer_order ) && isset($customer_order['ID']) ){
 
