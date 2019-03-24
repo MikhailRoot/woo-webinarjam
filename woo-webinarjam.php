@@ -2,11 +2,12 @@
 /*
 Plugin Name: Woocommerce WebinarJam
 Description: Sell access to your webinars with woocommerce
-Version: 0.5
+Version: 0.6
 Author: Mikhail Durnev
-Author URI: http://mikhailroot.github.io
-Copyright: (c)2018 Mikhail Durnev (email : mikhailD.101@gmail.com; skype: mikhail.root)
+Author URI: https://mikhailroot.ru
+Copyright: (c) 2019 Mikhail Durnev (email : mikhailD.101@gmail.com; skype: mikhail.root)
 */
+
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
 }
@@ -63,7 +64,6 @@ function webinarjam_product_tabs( $tabs) {
     $tabs['shipping']['class'][] = 'hide_if_webinarjam ';
     $tabs['variations']['class'][] = 'hide_if_webinarjam ';
     $tabs['advanced']['class'][] = 'hide_if_webinarjam ';
-    $tabs['general']['class'][] = 'show_if_webinarjam ';
 
     //create our own tab
     $mytab=array(
@@ -265,8 +265,11 @@ function webinarjam_send_webinar_link_to_paid_client($order_id){
                             $subject=str_replace('{'.$item.'}',$value,$subject);
                             $admin_email_body=str_replace('{'.$item.'}',$value,$admin_email_body);
                         }
-                        // lets send prepared email to user:)
-                        wc_mail($user->user_email,$subject,$email_body);
+
+                        if('on'===get_option('webinarjam_notify_client_on_successfull_registration',false)) {
+                            // lets send prepared email to user:)
+                            wc_mail($user->user_email, $subject, $email_body);
+                        }
 
                         if('on'===get_option('webinarjam_notify_admin_on_successfull_registration',false)){
                             wc_mail($admin_email,'New Webinar applicant!',$admin_email_body);
