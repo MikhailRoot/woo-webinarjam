@@ -237,16 +237,20 @@ function webinarjam_send_webinar_link_to_paid_client( $order_id ) {
 					$admin_email        = get_option( 'admin_email', '' );
 					$webinarjam_api_key = get_option( 'webinarjam_api_key', '' );
 					$webinarjam_id      = get_post_meta( $_product->id, 'webinarjam_id', true );
+
 					// get whole webinar object to access it's friendly name to show.
 					$webinar_obj  = webinarjam_get_webinar_data( $webinarjam_api_key, $webinarjam_id );
 					$webinar_name = isset( $webinar_obj->name ) ? $webinar_obj->name : $_product->get_title();
+
 					// REGISTER user to webinar!
 					$webinar_registration = webinarjam_register_user_to_webinar( $webinarjam_api_key, $webinarjam_id, $user->ID, 0 );
+
 					if ( is_wp_error( $webinar_registration ) ) {
 						// email to admin registration error!
 						$error_email_template = file_get_contents( plugin_dir_path( __FILE__ ) . 'includes/error_email_template.php' );
 						$user_name            = ( ! empty( $user->user_firstname ) ) && ( ! empty( $user->user_lastname ) ) ? $user->user_firstname . ' ' . $user->user_lastname : $user->display_name;
-							$error            = new WP_Error();
+						$error                = new WP_Error();
+
 						if ( is_wp_error( $webinar_obj ) ) {
 							 $error->add( $webinar_obj->get_error_code(), $webinar_obj->get_error_message() );
 						}
