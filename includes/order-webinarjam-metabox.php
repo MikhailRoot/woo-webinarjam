@@ -8,7 +8,7 @@ add_action('add_meta_boxes', 'webinarjam_add_order_metaboxes');
 
 function webinarjam_add_order_metaboxes()
 {
-    if (__webinarjam_order_has_webinars()) {
+    if (webinarjam_order_has_webinars()) {
 
         add_meta_box(
             'woocommerce-order-webinarjam',
@@ -23,7 +23,7 @@ function webinarjam_add_order_metaboxes()
 
 function webinarjam_order_metabox_content()
 {
-    $reg_results = __webinarjam_get_webinar_registration_results_from_order();
+    $reg_results = webinarjam_get_webinar_registration_results_from_order();
     if ( is_array($reg_results) ) {
         echo '<style> 
             .wbj_wrapper{ position: relative; margin: 0 -12px; counter-reset: webinarjamcount;}  
