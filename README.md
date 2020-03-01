@@ -4,7 +4,7 @@ Woocommerce plugin to sell webinarjam webinars
 My friend needed to sell webinars with webinarjam and i've created plugin for woocomerce for it. 
 
 ## Update:
-_Now it works with recently updated API!_
+We are waiting for updated API documentation so it may not work.
 
 
 ## NOTE
@@ -77,6 +77,7 @@ Thank you!
  + showing access links for webinars per client - accomplished via  `[webinarjam-list]` shortcode.
  + added shortcode inner content placeholders
  + it now uses woocommerce's standard `general` pricing tab so it has regular and sale prices.
+ + added support for guest orders (idea and code from Sam Krieg).
     
 ## Plans
 

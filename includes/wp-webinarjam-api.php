@@ -75,23 +75,15 @@ function webinarjam_get_webinar_data( $api_key, $webinar_id ) {
 /**
  * Registers WP_User to webinar, it utilized user_email and other user's data from WP_User object.
  *
- * @param string      $api_key      Api key to connect to.
- * @param string      $webinar_id   WebinarId to register user to.
- * @param WP_User|int $user         User object or user id to register to webinar.
- * @param int         $schedule     Schedule param for webinar (wasn't used yet by webinarjam docs).
+ * @param string $api_key           Api key to connect to.
+ * @param string $webinar_id        WebinarId to register user to.
+ * @param string $user_email        User email to register to webinar.
+ * @param string $user_first_name   User first name to register to webinar.
+ * @param string $user_last_name    User last name to register to webinar.
+ * @param int    $schedule          Schedule param for webinar (wasn't used yet by webinarjam docs).
  * @return array|WP_Error
  */
-function webinarjam_register_user_to_webinar( $api_key, $webinar_id, $user, $schedule = 0 ) {
-
-	$name  = '';
-	$email = '';
-	if ( is_numeric( $user ) ) {
-		$user = get_userdata( $user );
-	}
-	if ( $user instanceof WP_User && $user->ID > 0 ) {
-		$email      = $user->user_email;
-		$first_name = ! empty( $user->user_firstname ) ? $user->user_firstname : $user->display_name;
-		$last_name  = ! empty( $user->user_lastname ) ? $user->last_name : '';
+function webinarjam_register_user_to_webinar( $api_key, $webinar_id, $user_email, $user_first_name, $user_last_name, $schedule = 0 ) {
 
 		$response = wp_remote_post(
 			'https://webinarjam.genndi.com/api/register',
@@ -100,25 +92,30 @@ function webinarjam_register_user_to_webinar( $api_key, $webinar_id, $user, $sch
 				'body'   => array(
 					'api_key'    => $api_key,
 					'webinar_id' => $webinar_id,
-					'first_name' => $first_name,
-					'last_name'  => $last_name,
-					'email'      => $email,
+					'first_name' => $user_first_name,
+					'last_name'  => $user_last_name,
+					'email'      => $user_email,
 					'schedule'   => $schedule,
 				),
 			)
 		);
 
-		if ( is_wp_error( $response ) ) {
-			return $response; // return WP_Error as is to debug.
-		} else {
-			$body = $response['body'];
-			if ( 'Unauthorized' === $body ) {
-				return new WP_Error( 'Unauthorized', 'Unauthorized while registering user to webinar' );
-			} else {
-				$result = json_decode( $body );
-			}
-			return isset( $result->user ) ? $result->user : new WP_Error( 'wrong_response', isset( $result->status ) ? $result->message : 'wrong response from server while registering user to webinar' );
-		}
+	if ( is_wp_error( $response ) ) {
+		return $response; // return WP_Error as is to debug.
 	}
-	return new WP_Error( 'nouser', 'wrong user id or email supplied' ); // if no right user or user id supplied.
+
+	$body = $response['body'];
+
+	if ( 'Unauthorized' === $body ) {
+		return new WP_Error( 'Unauthorized', 'Unauthorized while registering user to webinar' );
+	} else {
+		$result = json_decode( $body );
+	}
+
+	return isset( $result->user )
+		? $result->user
+		: new WP_Error(
+			'wrong_response',
+			isset( $result->status ) ? $result->message : 'wrong response from server while registering user to webinar'
+		);
 }

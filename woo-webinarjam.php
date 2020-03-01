@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WooCommerce WebinarJam
  * Description: Sell access to your webinars with WooCommerce.
- * Version: 0.6.1
+ * Version: 0.6.2
  * Author: Mikhail Durnev
  * Author URI: https://mikhailroot.ru
  * Copyright: (c) 2019 Mikhail Durnev (email : mikhailD.101@gmail.com; skype: mikhail.root)
@@ -220,8 +220,25 @@ add_filter( 'woocommerce_payment_complete_order_status', 'webinarjam_autocomplet
  * @param int $order_id  Order id to process.
  */
 function webinarjam_send_webinar_link_to_paid_client( $order_id ) {
-	$order                = new WC_Order( $order_id );
-	$user                 = $order->get_user();
+
+	$user_email      = '';
+	$user_first_name = '';
+	$user_last_name  = '';
+
+	$order = new WC_Order( $order_id );
+	$user  = $order->get_user();
+
+	if ( $user instanceof WP_User && $user->ID > 0 ) {
+		$user_email      = $user->user_email;
+		$user_first_name = ! empty( $user->user_firstname ) ? $user->user_firstname : $user->display_name;
+		$user_last_name  = ! empty( $user->user_lastname ) ? $user->last_name : '';
+	} else {
+		// get user data from order. Idea from Sam Krieg to support guests orders.
+		$user_email      = $order->get_billing_email();
+		$user_first_name = $order->get_billing_first_name();
+		$user_last_name  = $order->get_billing_last_name();
+	}
+
 	$registration_results = array(); // array to store webinar registration results - in case we have multiple webinars bought in one order.
 
 	if ( count( $order->get_items() ) > 0 ) {
@@ -243,12 +260,12 @@ function webinarjam_send_webinar_link_to_paid_client( $order_id ) {
 					$webinar_name = isset( $webinar_obj->name ) ? $webinar_obj->name : $_product->get_title();
 
 					// REGISTER user to webinar!
-					$webinar_registration = webinarjam_register_user_to_webinar( $webinarjam_api_key, $webinarjam_id, $user->ID, 0 );
+					$webinar_registration = webinarjam_register_user_to_webinar( $webinarjam_api_key, $webinarjam_id, $user_email, $user_first_name, $user_last_name, 0 );
 
 					if ( is_wp_error( $webinar_registration ) ) {
 						// email to admin registration error!
 						$error_email_template = file_get_contents( plugin_dir_path( __FILE__ ) . 'includes/error_email_template.php' );
-						$user_name            = ( ! empty( $user->user_firstname ) ) && ( ! empty( $user->user_lastname ) ) ? $user->user_firstname . ' ' . $user->user_lastname : $user->display_name;
+						$user_name            = $user_first_name . ' ' . $user_last_name;
 						$error                = new WP_Error();
 
 						if ( is_wp_error( $webinar_obj ) ) {
@@ -264,7 +281,7 @@ function webinarjam_send_webinar_link_to_paid_client( $order_id ) {
 						$error_messages .= '</ul>';
 						$error_data      = array(
 							'webinar_name' => $webinar_name,
-							'user_email'   => $user->user_email,
+							'user_email'   => $user_email,
 							'user_name'    => $user_name,
 							'order_id'     => $order->get_id(),
 							'product_id'   => $_product->id,
