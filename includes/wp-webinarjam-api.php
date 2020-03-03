@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
 function webinarjam_list_webinars( $api_key ) {
 
 	$response = wp_remote_post(
-		'https://webinarjam.genndi.com/api/webinars',
+		'https://api.webinarjam.com/webinarjam/webinars',
 		array(
 			'method' => 'POST',
 			'body'   => array( 'api_key' => $api_key ),
@@ -47,7 +47,7 @@ function webinarjam_list_webinars( $api_key ) {
 function webinarjam_get_webinar_data( $api_key, $webinar_id ) {
 
 	$response = wp_remote_post(
-		'https://webinarjam.genndi.com/api/webinar',
+		'https://api.webinarjam.com/webinarjam/webinar',
 		array(
 			'method' => 'POST',
 			'body'   => array(
@@ -86,7 +86,7 @@ function webinarjam_get_webinar_data( $api_key, $webinar_id ) {
 function webinarjam_register_user_to_webinar( $api_key, $webinar_id, $user_email, $user_first_name, $user_last_name, $schedule = 0 ) {
 
 		$response = wp_remote_post(
-			'https://webinarjam.genndi.com/api/register',
+			'https://api.webinarjam.com/webinarjam/register',
 			array(
 				'method' => 'POST',
 				'body'   => array(
