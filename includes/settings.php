@@ -50,7 +50,7 @@ $default_admin_email_template = file_get_contents( plugin_dir_path( __FILE__ ) .
 			</tr>
 		</table>
 		<input type="hidden" name="action" value="update" />
-		<input type="hidden" name="page_options"  value="webinarjam_api_key,webinarjam_paid_successfully_email_template,webinarjam_paid_successfully_email_subject,webinarjam_notify_admin_on_successfull_registration,webinarjam_paid_successfully_admin_email_template" />
+		<input type="hidden" name="page_options"  value="webinarjam_api_key,webinarjam_paid_successfully_email_template,webinarjam_paid_successfully_email_subject,webinarjam_notify_admin_on_successfull_registration,webinarjam_paid_successfully_admin_email_template,webinarjam_notify_client_on_successfull_registration" />
 		<p class="submit">
 			<input type="submit" class="button-primary" value="<?php esc_attr_e( 'Save Changes' ); ?>" />
 		</p>
