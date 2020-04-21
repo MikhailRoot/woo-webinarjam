@@ -54,11 +54,11 @@ class WC_Product_Webinarjam extends WC_Product {
 	 * @return string
 	 */
 	public function get_title() {
-	    // TODO update to most recent woocommerce.
+
 		$title = $this->post->post_title;
 
-		if ( $this->get_parent() > 0 ) {
-			$title = get_the_title( $this->get_parent() ) . ' &rarr; ' . $title;
+		if ( $this->get_parent_id() > 0 ) {
+			$title = get_the_title( $this->get_parent_id() ) . ' &rarr; ' . $title;
 		}
 
 		return apply_filters( 'woocommerce_product_title', $title, $this );

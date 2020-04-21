@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WooCommerce WebinarJam
  * Description: Sell access to your webinars with WooCommerce.
- * Version: 0.7.1
+ * Version: 0.7.2
  * Author: Mikhail Durnev
  * Author URI: https://mikhailroot.ru
  * Copyright: (c) 2019 Mikhail Durnev (email : mikhailD.101@gmail.com; skype: mikhail.root)
@@ -241,6 +241,12 @@ function webinarjam_send_webinar_link_to_paid_client( $order_id ) {
 
 	$registration_results = array(); // array to store webinar registration results - in case we have multiple webinars bought in one order.
 
+	$old_registration_results = json_decode( get_post_meta( $order->get_id(), 'webinarjam_registration_result', true ) );
+
+	if ( ! empty( $old_registration_results ) ) {
+		return; // do nothing as otherwise we'll reregister user again.
+	}
+
 	if ( count( $order->get_items() ) > 0 ) {
 		foreach ( $order->get_items() as $item ) {
 			if ( ! is_object( $item ) ) {
@@ -253,13 +259,13 @@ function webinarjam_send_webinar_link_to_paid_client( $order_id ) {
 					// lets register user for webinar and send him access link.
 					$admin_email        = get_option( 'admin_email', '' );
 					$webinarjam_api_key = get_option( 'webinarjam_api_key', '' );
-					$webinarjam_id      = get_post_meta( $_product->id, 'webinarjam_id', true );
+					$webinarjam_id      = get_post_meta( $_product->get_id(), 'webinarjam_id', true );
 
 					// get whole webinar object to access it's friendly name to show.
 					$webinar_obj  = webinarjam_get_webinar_data( $webinarjam_api_key, $webinarjam_id );
 					$webinar_name = isset( $webinar_obj->name ) ? $webinar_obj->name : $_product->get_title();
 					// lets extract first schedule id - so register to webinar start working.
-					$schedule = isset($webinar_obj->schedules[0]->schedule) ? $webinar_obj->schedules[0]->schedule : 0;
+					$schedule = isset( $webinar_obj->schedules[0]->schedule ) ? $webinar_obj->schedules[0]->schedule : 0;
 					// REGISTER user to webinar!
 					$webinar_registration = webinarjam_register_user_to_webinar( $webinarjam_api_key, $webinarjam_id, $user_email, $user_first_name, $user_last_name, $schedule );
 
@@ -321,7 +327,7 @@ function webinarjam_send_webinar_link_to_paid_client( $order_id ) {
 
 						if ( 'on' === get_option( 'webinarjam_notify_client_on_successfull_registration', false ) ) {
 							// lets send prepared email to user:) .
-							wc_mail( $user->user_email, $subject, $email_body );
+							wc_mail( $user_email, $subject, $email_body );
 						}
 
 						if ( 'on' === get_option( 'webinarjam_notify_admin_on_successfull_registration', false ) ) {

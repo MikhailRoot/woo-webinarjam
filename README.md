@@ -3,13 +3,11 @@ Woocommerce plugin to sell webinarjam webinars
 
 My friend needed to sell webinars with webinarjam and i've created plugin for woocomerce for it. 
 
-## Updated on March 2020:
-Code is updated with current [API documentation](https://documentation.webinarjam.com/category/webinarjam-api/).
 
 ##Important
 Because Webinarjam changed api and now use Schedule variable, which was previously unused, i've updated code to make it working, right now it registers user to first schedule in webinar.
 Sorry for incovenience but if we want to sell same webinar with different schedules it will require big change in how product is sold (e.g. we'll have to display schedule selector for customer).
-So right now (March 13, 2020) for case where you have a webinar it works, but supports in fact single schedule per webinar.
+So right now (March 13, 2020)(since 0.7.1) for case where you have a webinar it works, but supports in fact single schedule per webinar.
 
 ## NOTE
 
@@ -90,3 +88,8 @@ Thank you!
 - think about better UI for selecting webinar to sell.
 
 If you have any issues or improvements ideas contact [me here on github](https://github.com/MikhailRoot) or via skype Mikhail.root
+
+
+## Change Log
+ - 0.7.2  - fixed bug of not sending emails to guest users, updated deprecated Woocommerce functions\methods to work with WooCommerce 4.0+ .
+ - 0.7.1  - Code is updated to current [API documentation](https://documentation.webinarjam.com/category/webinarjam-api/). 
