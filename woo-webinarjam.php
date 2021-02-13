@@ -41,16 +41,18 @@ add_action( 'admin_menu', 'webinarjam_admin_page' );
  */
 function register_webinarjam_product_type() {
 
-	require_once plugin_dir_path( __FILE__ ) . 'includes/wc-product-webinarjam.php';
+    if ( class_exists('WC_Product') ) {
+	    require_once plugin_dir_path( __FILE__ ) . 'includes/wc-product-webinarjam.php';
 
-	// functions to work with orders, extract data from webinars etc.
+	    // functions to work with orders, extract data from webinars etc.
 
-	require_once plugin_dir_path( __FILE__ ) . 'includes/utilities.php';
+	    require_once plugin_dir_path( __FILE__ ) . 'includes/utilities.php';
 
-	// add metabox to Order's page.
-	require_once plugin_dir_path( __FILE__ ) . 'includes/order-webinarjam-metabox.php';
+	    // add metabox to Order's page.
+	    require_once plugin_dir_path( __FILE__ ) . 'includes/order-webinarjam-metabox.php';
 
-	require_once plugin_dir_path( __FILE__ ) . 'includes/webinarjam-shortcodes.php';
+	    require_once plugin_dir_path( __FILE__ ) . 'includes/webinarjam-shortcodes.php';
+    }
 }
 add_action( 'init', 'register_webinarjam_product_type' );
 
